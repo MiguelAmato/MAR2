@@ -1,5 +1,5 @@
 // Nombre del alumno Miguel Antonio Amato Hermo
-// Usuario del Juez MAR102
+// Usuario del Juez MAR203
 
 #include <iostream>
 #include <iomanip>
