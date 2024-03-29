@@ -20,26 +20,26 @@ using namespace std;
 
 	monedas(0,j) :  INF
 	monedas(i,0) : 	0
-	monedas(i,j) : 	min(monedas(i-1,j-valor[i-1]) + 1, monedas(i-1,j));		Si cant[i-1] > 0 && j-valor[i-1] >= 0
-	monedas(i,j) : 	monedas(i-1,j);
 
-	Coste del algoritmo: M*P siendo M el numero de monedas y P el precio a pagar 
+	Coste del algoritmo: M*P*C siendo M el numero de monedas y P el precio a pagar y C la cantidad de monedas que hay 
 	Coste en espacio: O(n^2)
 */
 
-int monedas(const vector<int> & valor, vector<int> & cant, int & P) {
-	vector<int> dp(P + 1, INF);
-	dp[0] = 0;
-	for (int i = 1; i <= valor.size(); ++i) {
-		for (int j = 1; j <= P && cant[i-1] > 0; ++j) {
-			if (j - valor[i-1] >= 0) {
-				dp[j] = min(dp[j - valor[i-1]] + 1, dp[j]);
-				if (dp[j] == dp[j - valor[i-1]] + 1)
-					--cant[i-1];
+int monedas(const vector<int> & valor, vector<int> & cant, const int & N, const int & P) {
+	vector<vector<int>> dp(N + 1, vector<int>(P + 1, INF));
+	dp[0][0] = 0;
+	for (int i = 1 ; i <= valor.size(); ++i) {
+		dp[i][0] = 0;
+		for (int j = 1; j <= P; ++j) {
+			int aux = INF;
+			for (int k = 0; k <= cant[i-1] && valor[i-1] * k <= j; ++k) {
+				if (dp[i-1][j-(valor[i-1]*k)] != INF)
+					aux = min(aux, dp[i-1][j-(valor[i-1]*k)] + k);
 			}
+			dp[i][j] = aux;
 		}
 	}
-	return dp[P];
+	return dp[N][P];
 }
 
 bool resuelveCaso() {
@@ -53,7 +53,12 @@ bool resuelveCaso() {
 	for (int & i : cant) cin >> i;
 	int P;
 	cin >> P;
-	cout << monedas(valor, cant, P) << "\n";
+	int sol = monedas(valor, cant, N, P);
+	if (sol != INF)
+		cout << "SI " << sol;
+	else
+		cout << "NO";
+	cout << "\n"; 
     return true;
 }
 
